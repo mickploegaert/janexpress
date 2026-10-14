@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../../../config/database.php';
 require_once __DIR__ . '/../entities/product.php';
 
 class ProductDAO
@@ -116,12 +116,19 @@ class ProductDAO
         $response = curl_exec($curl);
         $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $error = curl_error($curl);
+        curl_close($curl);
 
         if ($response === false) {
             throw new RuntimeException('Supabase-request mislukt: ' . $error);
         }
 
         if ($status < 200 || $status >= 300) {
+            if ($status === 401) {
+                throw new RuntimeException(
+                    'Supabase-toegang geweigerd. Voer public/supabase-products.sql uit in de Supabase SQL Editor.'
+                );
+            }
+
             throw new RuntimeException("Supabase HTTP {$status}: {$response}");
         }
 
