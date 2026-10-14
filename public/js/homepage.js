@@ -31,7 +31,6 @@ var modalName = document.querySelector('#modal-name');
 var modalDescription = document.querySelector('#modal-description');
 var modalPrice = document.querySelector('#modal-price');
 var modalStock = document.querySelector('#modal-stock');
-var modalCart = document.querySelector('.modal-cart');
 
 document.querySelectorAll('.product-image-button').forEach(function (button) {
     button.addEventListener('click', function () {
@@ -48,7 +47,6 @@ document.querySelectorAll('.product-image-button').forEach(function (button) {
             ? 'Op voorraad - nog ' + stock + ' beschikbaar'
             : 'Tijdelijk uitverkocht';
         modalStock.classList.toggle('out-of-stock', stock < 1);
-        modalCart.disabled = stock < 1;
         modal.hidden = false;
         document.body.classList.add('modal-open');
     });

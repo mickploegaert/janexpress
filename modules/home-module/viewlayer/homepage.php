@@ -4,6 +4,7 @@ require_once __DIR__ . '/../logiclayer/Services/productService.php';
 
 $publicPath ??= '../../../public';
 $homeUrl ??= 'homepage.php';
+$ordersUrl ??= '../modules/ordermodule/viewlayer/Orders.php';
 
 $products = [];
 $error = null;
@@ -52,9 +53,14 @@ function categoryName(int $categoryId): string
     <title>JanExpress - Slim shoppen</title>
     <link rel="stylesheet" href="<?= e($publicPath) ?>/css/homepage.css">
     <script src="<?= e($publicPath) ?>/js/homepage.js" defer></script>
+    <script src="<?= e($publicPath) ?>/js/orders.js" defer></script>
 </head>
 
 <body>
+    <div id="cart-message" class="cart-message" role="status" aria-live="polite" hidden>
+        Product toegevoegd aan je winkelmand.
+    </div>
+
     <header class="header">
         <a class="brand" href="<?= e($homeUrl) ?>"><span class="brand-mark">J</span>JanExpress</a>
         <label class="search">
@@ -71,7 +77,7 @@ function categoryName(int $categoryId): string
                 <path d="M5.5 20c.6-3.2 2.8-5 6.5-5s5.9 1.8 6.5 5"></path>
             </svg>
         </a>
-        <a class="cart header-cart" href="#" aria-label="Winkelmand">
+        <a class="cart header-cart" href="<?= e($ordersUrl) ?>" aria-label="Winkelmand">
             <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 7H7"></path>
                 <circle cx="10" cy="19" r="1.2"></circle>
@@ -106,10 +112,12 @@ function categoryName(int $categoryId): string
             <?php else: ?>
                 <div class="products">
                     <?php foreach ($products as $index => $product): ?>
-                        <article class="card" data-category="<?= e(categoryName($product->getCategoryId())) ?>"
+                        <article class="card" data-id="<?= (int) $product->getId() ?>"
+                            data-category="<?= e(categoryName($product->getCategoryId())) ?>"
                             data-name="<?= e($product->getName()) ?>"
                             data-description="<?= e($product->getDescription() ?? 'Geen beschrijving beschikbaar.') ?>"
                             data-price="€ <?= number_format($product->getPrice(), 2, ',', '.') ?>"
+                            data-price-value="<?= $product->getPrice() ?>"
                             data-stock="<?= $product->getStock() ?>"
                             data-image="<?= e($product->getImage() ?: $images[$index % count($images)]) ?>">
                             <div class="card-image">
