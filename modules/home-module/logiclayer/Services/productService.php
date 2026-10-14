@@ -12,7 +12,7 @@ class ProductService
         $this->productDAO = new ProductDAO();
     }
 
-    public function getAllProducts(): array
+    public function getAllProducts(): iterable
     {
         return $this->productDAO->getAllProducts();
     }
