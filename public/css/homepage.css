@@ -49,6 +49,8 @@ h2 { margin: 8px 0 24px; font-size: 30px; letter-spacing: -1px; }
 .add { display: grid; width: 36px; height: 36px; place-items: center; border: 0; border-radius: 11px; color: white; background: var(--orange); font-size: 24px; cursor: pointer; }
 .add.disabled { color: #aeb1b6; background: #e7e7e9; cursor: not-allowed; }
 .notice { padding: 18px; border-radius: 12px; color: #9b270f; background: #fff0eb; }
+.cart-message { position: fixed; top: 84px; right: 28px; z-index: 40; padding: 14px 18px; border-radius: 10px; color: white; background: #2E9E5B; box-shadow: 0 8px 24px rgba(0, 0, 0, .16); font-size: 14px; }
+.cart-message[hidden] { display: none; }
 footer { padding: 38px max(24px, calc((100% - 1110px) / 2)); color: #a8abb4; background: var(--ink); }
 .footer-grid { display: grid; grid-template-columns: 1.7fr 1fr 1fr; gap: 40px; }
 .footer-brand { color: white; font-size: 16px; font-weight: 700; }
