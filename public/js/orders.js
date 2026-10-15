@@ -13,31 +13,42 @@ var messageTimer;
 function addToCart(card) {
     var cart = getCart();
     var productId = Number(card.dataset.id);
+    var stock = Number(card.dataset.stock);
     var product = cart.find(function (item) {
         return item.id === productId;
     });
 
     if (product) {
+        if (product.quantity >= stock) {
+            showCartMessage('Je kunt niet meer stuks van dit product bestellen.');
+            return;
+        }
         product.quantity += 1;
     } else {
+        if (stock < 1) {
+            return;
+        }
+
         cart.push({
             id: productId,
             name: card.dataset.name,
             price: Number(card.dataset.priceValue),
             image: card.dataset.image,
+            stock: stock,
             quantity: 1
         });
     }
 
     saveCart(cart);
-    showCartMessage();
+    showCartMessage('Product toegevoegd aan je winkelmand.');
 }
 
-function showCartMessage() {
+function showCartMessage(message) {
     if (!cartMessage) {
         return;
     }
 
+    cartMessage.textContent = message;
     clearTimeout(messageTimer);
     cartMessage.hidden = false;
     messageTimer = setTimeout(function () {
@@ -78,7 +89,8 @@ function showCart() {
             '<div class="quantity">' +
             '<button data-decrease="' + index + '">−</button>' +
             '<span>' + item.quantity + '</span>' +
-            '<button data-increase="' + index + '">+</button>' +
+            '<button data-increase="' + index + '"' +
+            (item.stock !== undefined && item.quantity >= item.stock ? ' disabled' : '') + '>+</button>' +
             '</div></article>';
     });
 
@@ -110,7 +122,9 @@ if (cartItems) {
         }
 
         if (button.dataset.increase) {
-            cart[index].quantity += 1;
+            if (cart[index].stock === undefined || cart[index].quantity < cart[index].stock) {
+                cart[index].quantity += 1;
+            }
         }
 
         saveCart(cart);
@@ -133,7 +147,11 @@ document.querySelectorAll('.add').forEach(function (button) {
 document.querySelectorAll('.product-image-button').forEach(function (button) {
     button.addEventListener('click', function () {
         activeCard = button.closest('.card');
-        modalCart.disabled = Number(activeCard.dataset.stock) < 1;
+        var product = getCart().find(function (item) {
+            return item.id === Number(activeCard.dataset.id);
+        });
+        var quantity = product ? product.quantity : 0;
+        modalCart.disabled = quantity >= Number(activeCard.dataset.stock);
     });
 });
 
