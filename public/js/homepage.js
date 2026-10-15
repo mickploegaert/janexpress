@@ -1,3 +1,23 @@
+var activeCategory = 'alles';
+var searchQuery = '';
+
+function updateVisibleCards() {
+    document.querySelectorAll('.card').forEach(function (card) {
+        var cardCategory = card.dataset.category.toLowerCase();
+        var cardName = card.dataset.name.toLowerCase();
+        var matchesCategory = activeCategory === 'alles' || activeCategory === cardCategory;
+        var matchesSearch = searchQuery === '' || cardName.includes(searchQuery);
+        card.classList.toggle('hidden', !matchesCategory || !matchesSearch);
+    });
+}
+
+function updateClearFiltersVisibility() {
+    var clearFilters = document.querySelector('.clear-filters');
+    if (clearFilters) {
+        clearFilters.hidden = activeCategory === 'alles' && searchQuery === '';
+    }
+}
+
 document.querySelectorAll('.filter').forEach(function (filter) {
     filter.addEventListener('click', function () {
         document.querySelectorAll('.filter').forEach(function (button) {
@@ -5,22 +25,35 @@ document.querySelectorAll('.filter').forEach(function (filter) {
         });
         filter.classList.add('active');
 
-        var category = filter.textContent.trim().toLowerCase();
-        document.querySelectorAll('.card').forEach(function (card) {
-            var cardCategory = card.dataset.category.toLowerCase();
-            card.classList.toggle('hidden', category !== 'alles' && category !== cardCategory);
-        });
+        activeCategory = filter.textContent.trim().toLowerCase();
+        updateVisibleCards();
+        updateClearFiltersVisibility();
     });
 });
 
 var search = document.querySelector('.search input');
 if (search) {
     search.addEventListener('input', function () {
-        var query = search.value.toLowerCase().trim();
-        document.querySelectorAll('.card').forEach(function (card) {
-            var name = card.dataset.name.toLowerCase();
-            card.classList.toggle('hidden', query !== '' && !name.includes(query));
+        searchQuery = search.value.toLowerCase().trim();
+        updateVisibleCards();
+        updateClearFiltersVisibility();
+    });
+}
+
+var clearFilters = document.querySelector('.clear-filters');
+if (clearFilters) {
+    clearFilters.addEventListener('click', function () {
+        activeCategory = 'alles';
+        searchQuery = '';
+        document.querySelector('.filter').classList.add('active');
+        document.querySelectorAll('.filter:not(:first-child)').forEach(function (filter) {
+            filter.classList.remove('active');
         });
+        if (search) {
+            search.value = '';
+        }
+        updateVisibleCards();
+        updateClearFiltersVisibility();
     });
 }
 
@@ -67,3 +100,5 @@ document.addEventListener('keydown', function (event) {
         document.body.classList.remove('modal-open');
     }
 });
+
+updateClearFiltersVisibility();
