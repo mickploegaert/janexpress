@@ -104,6 +104,9 @@ function categoryName(int $categoryId): string
                     </button>
                 <?php endforeach; ?>
             </nav>
+            <button class="clear-filters text-sm font-bold text-orange-600 hover:underline" type="button">
+                Filters wissen
+            </button>
 
             <?php if ($error !== null): ?>
                 <div class="notice"><?= e($error) ?></div>

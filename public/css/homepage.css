@@ -29,11 +29,13 @@ h1 { max-width: 540px; margin: 22px 0 16px; font-size: 58px; line-height: 1.02; 
 h1 span { color: var(--orange); }
 .hero p { max-width: 410px; margin: 0 0 28px; color: #bfc2c8; line-height: 1.5; }
 .button { display: inline-flex; align-items: center; gap: 12px; padding: 13px 16px; border: 0; border-radius: 10px; color: white; background: var(--orange); font-size: 14px; cursor: pointer; }
-.selection { margin-top: 64px; }
+.selection { position: relative; margin-top: 64px; }
 h2 { margin: 8px 0 24px; font-size: 30px; letter-spacing: -1px; }
 .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
 .filter { padding: 11px 17px; border: 1px solid var(--line); border-radius: 22px; color: #555b64; background: white; cursor: pointer; }
 .filter.active { color: white; border-color: var(--ink); background: var(--ink); }
+.clear-filters { position: absolute; right: 0; top: 0; margin: 0; padding: 0; border: 0; color: var(--orange); background: transparent; font-size: 14px; font-weight: 700; cursor: pointer; }
+.clear-filters:hover { text-decoration: underline; }
 .products { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .card { overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: white; }
 .card.hidden { display: none; }
