@@ -123,9 +123,9 @@ class ProductDAO
         }
 
         if ($status < 200 || $status >= 300) {
-            if ($status === 401) {
+            if ($status === 401 || ($status === 403 && str_contains($response, '42501'))) {
                 throw new RuntimeException(
-                    'Supabase-toegang geweigerd. Voer public/supabase-products.sql uit in de Supabase SQL Editor.'
+                    'Geen toegang tot de producten. Voer database/customers.sql opnieuw uit in de Supabase SQL Editor.'
                 );
             }
 

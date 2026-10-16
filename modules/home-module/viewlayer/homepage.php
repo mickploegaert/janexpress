@@ -1,10 +1,15 @@
 <?php
 
 require_once __DIR__ . '/../logiclayer/Services/productService.php';
+require_once __DIR__ . '/../../accountmodule/logiclayer/Services/customerSession.php';
+
+CustomerSession::start();
 
 $publicPath ??= '../../../public';
 $homeUrl ??= 'homepage.php';
 $ordersUrl ??= '../modules/ordermodule/viewlayer/Orders.php';
+$loginUrl ??= '../modules/accountmodule/viewlayer/login.php';
+$accountUrl ??= '../modules/accountmodule/viewlayer/account.php';
 
 $products = [];
 $error = null;
@@ -62,7 +67,7 @@ function categoryName(int $categoryId): string
     </div>
 
     <header class="header">
-        <a class="brand" href="<?= e($homeUrl) ?>"><span class="brand-mark">J</span>JanExpress</a>
+        <a class="brand" href="<?= e($homeUrl) ?>"><img class="brand-logo" src="<?= e($publicPath) ?>/logo/janexpresslogo.png" alt=""><span class="brand-name">JanExpress</span></a>
         <label class="search">
             <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="11" cy="11" r="6.5"></circle>
@@ -71,12 +76,7 @@ function categoryName(int $categoryId): string
             <input type="search" placeholder="Waar ben je naar op zoek?">
         </label>
         <a class="nav-link" href="#producten">Producten</a>
-        <a class="account" href="#" aria-label="Account">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="8" r="3.2"></circle>
-                <path d="M5.5 20c.6-3.2 2.8-5 6.5-5s5.9 1.8 6.5 5"></path>
-            </svg>
-        </a>
+        <?php require __DIR__ . '/../../accountmodule/viewlayer/accountLink.php'; ?>
         <a class="cart header-cart" href="<?= e($ordersUrl) ?>" aria-label="Winkelmand">
             <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 7H7"></path>
@@ -88,6 +88,7 @@ function categoryName(int $categoryId): string
 
     <main>
         <section class="hero">
+            <img class="hero-banner" src="<?= e($publicPath) ?>/logo/janexpressbanner.png" alt="">
             <span class="eyebrow">Voorjaarsdeals</span>
             <h1>Grote ideeën.<br><span>Scherpe prijzen.</span></h1>
             <p>Ontdek slimme favorieten voor thuis, onderweg en alles daartussenin.</p>
@@ -177,7 +178,7 @@ function categoryName(int $categoryId): string
     <footer>
         <div class="footer-grid">
             <div>
-                <div class="footer-brand"><span class="brand-mark">J</span>JanExpress</div>
+                <div class="footer-brand"><img class="brand-logo footer-logo" src="<?= e($publicPath) ?>/logo/janexpresslogo.png" alt=""><span class="brand-name">JanExpress</span></div>
                 <p class="footer-description">Slim shoppen, zonder gedoe. Alles wat je nodig hebt op één plek.</p>
             </div>
             <div>
