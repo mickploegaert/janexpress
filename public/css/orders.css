@@ -159,6 +159,28 @@
     font-size: 16px;
 }
 
+.cart-message {
+    position: fixed;
+    top: 84px;
+    right: 28px;
+    z-index: 40;
+    max-width: 360px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    color: white;
+    background: #b63a20;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .16);
+    font-size: 14px;
+}
+
+.cart-message[hidden] {
+    display: none;
+}
+
+.cart-message.success {
+    background: #2e9e5b;
+}
+
 @media (max-width: 800px) {
     .cart-page {
         padding: 36px 16px 80px;
