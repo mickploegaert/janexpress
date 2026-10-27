@@ -43,6 +43,32 @@ class OrderDAO
         return true;
     }
 
+    public function createOrderWithItems(Order $order): bool
+    {
+        $rows = $this->request('POST', '', $this->orderData($order), true);
+        $orderId = $rows[0]['id'] ?? null;
+
+        if (!is_numeric($orderId)) {
+            throw new RuntimeException('De bestelling kreeg geen ID van Supabase.');
+        }
+
+        $items = [];
+        foreach ($order->getItems() as $item) {
+            $items[] = [
+                'order_id' => (int) $orderId,
+                'product_id' => $item->getProductId(),
+                'quantity' => $item->getQuantity(),
+                'price' => $item->getPrice(),
+            ];
+        }
+
+        if ($items !== []) {
+            $this->requestAt('POST', '/rest/v1/order_items', '', $items);
+        }
+
+        return true;
+    }
+
     public function updateOrder(Order $order): bool
     {
         if ($order->getId() === null) {
@@ -86,10 +112,21 @@ class OrderDAO
         ];
     }
 
-    private function request(string $method, string $query, ?array $data = null): array
+    private function request(string $method, string $query, ?array $data = null, bool $returnRepresentation = false): array
+    {
+        return $this->requestAt($method, $this->endpoint, $query, $data, $returnRepresentation);
+    }
+
+    private function requestAt(
+        string $method,
+        string $endpoint,
+        string $query,
+        ?array $data = null,
+        bool $returnRepresentation = false
+    ): array
     {
         $curl = curl_init(
-            rtrim($this->database->getSupabaseUrl(), '/') . $this->endpoint . $query
+            rtrim($this->database->getSupabaseUrl(), '/') . $endpoint . $query
         );
 
         if ($curl === false) {
@@ -103,7 +140,7 @@ class OrderDAO
                 'apikey: ' . $this->database->getSupabaseKey(),
                 'Authorization: Bearer ' . $this->database->getSupabaseKey(),
                 'Content-Type: application/json',
-                'Prefer: return=minimal',
+                'Prefer: ' . ($returnRepresentation ? 'return=representation' : 'return=minimal'),
             ],
             CURLOPT_POSTFIELDS => $data === null
                 ? null
