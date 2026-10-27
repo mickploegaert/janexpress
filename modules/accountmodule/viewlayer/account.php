@@ -37,6 +37,7 @@ function e(string $value): string
 }
 
 $pageTitle = 'Je account - JanExpress';
+$dashboardUrl = '../../customerdashboard-module/viewlayer/klantdashboard.php';
 require __DIR__ . '/siteHeader.php';
 ?>
         <div class="section-label">Account</div>
@@ -69,6 +70,7 @@ require __DIR__ . '/siteHeader.php';
                 </dl>
                 <div class="auth-actions">
                     <a class="button auth-submit" href="edit.php">Gegevens aanpassen</a>
+                    <a class="button auth-submit" href="<?= e($dashboardUrl) ?>">Mijn bestellingen <span>›</span></a>
                     <a class="button-secondary" href="<?= e($homeUrl) ?>">Verder winkelen</a>
                     <form method="post" action="logout.php">
                         <input type="hidden" name="csrf_token" value="<?= e(CustomerSession::token()) ?>">

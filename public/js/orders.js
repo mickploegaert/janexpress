@@ -43,12 +43,13 @@ function addToCart(card) {
     showCartMessage('Product toegevoegd aan je winkelmand.');
 }
 
-function showCartMessage(message) {
+function showCartMessage(message, success) {
     if (!cartMessage) {
         return;
     }
 
     cartMessage.textContent = message;
+    cartMessage.classList.toggle('success', success === true);
     clearTimeout(messageTimer);
     cartMessage.hidden = false;
     messageTimer = setTimeout(function () {
@@ -135,6 +136,49 @@ if (cartItems) {
 
     confirmation.addEventListener('change', function () {
         confirmOrder.disabled = !confirmation.checked;
+    });
+
+    confirmOrder.addEventListener('click', function () {
+        confirmOrder.disabled = true;
+        confirmOrder.textContent = 'Bestelling wordt opgeslagen...';
+
+        fetch('Orders.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                csrf_token: confirmOrder.dataset.csrf,
+                cart: getCart()
+            })
+        })
+            .then(function (response) {
+                return response.text().then(function (text) {
+                    var data;
+
+                    try {
+                        data = JSON.parse(text);
+                    } catch (parseError) {
+                        throw new Error('De server gaf geen geldig antwoord terug.');
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Bestelling kon niet worden opgeslagen.');
+                    }
+
+                    return data;
+                });
+            })
+            .then(function (data) {
+                localStorage.removeItem('janexpress-cart');
+                showCartMessage('Bestelling is opgeslagen.', true);
+                setTimeout(function () {
+                    window.location.href = data.redirect || '../../accountmodule/viewlayer/account.php';
+                }, 800);
+            })
+            .catch(function (error) {
+                showCartMessage(error.message);
+                confirmOrder.disabled = false;
+                confirmOrder.textContent = 'Bestelling bevestigen ›';
+            });
     });
 }
 

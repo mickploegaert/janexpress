@@ -16,6 +16,9 @@ $pageTitle ??= 'JanExpress';
     <title><?= e($pageTitle) ?></title>
     <link rel="stylesheet" href="<?= e($publicPath) ?>/css/homepage.css">
     <link rel="stylesheet" href="<?= e($publicPath) ?>/css/auth.css">
+    <?php if (isset($extraStylesheet)): ?>
+        <link rel="stylesheet" href="<?= e($publicPath . '/css/' . $extraStylesheet) ?>">
+    <?php endif; ?>
 </head>
 
 <body class="page-auth">

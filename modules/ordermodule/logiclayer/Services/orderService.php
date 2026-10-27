@@ -27,6 +27,11 @@ class OrderService
         return $this->orderDAO->createOrder($this->toValidOrder($orderDTO));
     }
 
+    public function createOrderWithItems(OrderDTO $orderDTO): bool
+    {
+        return $this->orderDAO->createOrderWithItems($this->toValidOrder($orderDTO));
+    }
+
     public function updateOrder(OrderDTO $orderDTO): bool
     {
         return $this->orderDAO->updateOrder($this->toValidOrder($orderDTO, true));
