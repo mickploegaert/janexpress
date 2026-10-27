@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../datalayer/dao/customerDAO.php';
 require_once __DIR__ . '/../dto/customerDTO.php';
+require_once __DIR__ . '/../dto/profileDTO.php';
 
 class CustomerService
 {
@@ -71,6 +72,42 @@ class CustomerService
     public function getById(string $id): ?User
     {
         return $this->customers()->findById($id);
+    }
+
+    public function updateOwnProfile(string $userId, ProfileDTO $profile): User
+    {
+        $error = $profile->getError();
+        if ($error !== '') {
+            throw new InvalidArgumentException($error);
+        }
+
+        $current = $this->customers()->findById($userId);
+        if ($current === null) {
+            throw new InvalidArgumentException('Je account is niet gevonden.');
+        }
+
+        $existing = $this->customers()->findByEmail($profile->getEmail());
+        if ($existing !== null && $existing->getId() !== $current->getId()) {
+            throw new InvalidArgumentException('Dit e-mailadres is al in gebruik.');
+        }
+
+        try {
+            return $this->customers()->updateProfile($current, new User(
+                $current->getId(),
+                $profile->getFirstName(),
+                $profile->getLastName(),
+                $profile->getEmail(),
+                $profile->getPhone(),
+                $current->getPasswordHash(),
+                $current->getRole()
+            ));
+        } catch (RuntimeException $exception) {
+            if (str_contains($exception->getMessage(), '23505')) {
+                throw new InvalidArgumentException('Dit e-mailadres is al in gebruik.');
+            }
+
+            throw $exception;
+        }
     }
 
     public static function publicError(RuntimeException $exception): string

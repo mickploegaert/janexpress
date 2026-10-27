@@ -87,6 +87,9 @@ function categoryName(int $categoryId): string
     </header>
 
     <main>
+        <?php if (!CustomerSession::isLoggedIn() && ($_GET['uitgelogd'] ?? '') === '1'): ?>
+            <p class="account-notice" role="status">Je bent uitgelogd.</p>
+        <?php endif; ?>
         <section class="hero">
             <img class="hero-banner" src="<?= e($publicPath) ?>/logo/janexpressbanner.png" alt="">
             <span class="eyebrow">Voorjaarsdeals</span>

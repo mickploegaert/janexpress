@@ -11,7 +11,7 @@ $isValidPost = $_SERVER['REQUEST_METHOD'] === 'POST'
 
 if ($isValidPost) {
     CustomerSession::logout();
-    header('Location: ../../../public/index.php');
+    header('Location: ../../../public/index.php?uitgelogd=1');
     exit;
 }
 

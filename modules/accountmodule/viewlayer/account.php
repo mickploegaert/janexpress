@@ -41,7 +41,7 @@ require __DIR__ . '/siteHeader.php';
 ?>
         <div class="section-label">Account</div>
         <h1>Je account</h1>
-        <p class="auth-lead">Dit zijn de persoonlijke gegevens van je JanExpress-account.</p>
+        <p class="auth-lead">Bekijk je persoonlijke gegevens en pas ze aan als er iets verandert.</p>
         <section class="auth-card">
             <?php if ($flash !== null): ?>
                 <div class="form-success" role="status"><?= e($flash) ?></div>
@@ -68,7 +68,8 @@ require __DIR__ . '/siteHeader.php';
                     </div>
                 </dl>
                 <div class="auth-actions">
-                    <a class="button auth-submit" href="<?= e($homeUrl) ?>">Verder winkelen <span>›</span></a>
+                    <a class="button auth-submit" href="edit.php">Gegevens aanpassen</a>
+                    <a class="button-secondary" href="<?= e($homeUrl) ?>">Verder winkelen</a>
                     <form method="post" action="logout.php">
                         <input type="hidden" name="csrf_token" value="<?= e(CustomerSession::token()) ?>">
                         <button class="button-secondary" type="submit">Uitloggen</button>

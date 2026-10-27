@@ -28,6 +28,12 @@ class CustomerSession
         $_SESSION['customer_first_name'] = $user->getFirstName();
     }
 
+    public static function rememberName(string $firstName): void
+    {
+        self::start();
+        $_SESSION['customer_first_name'] = $firstName;
+    }
+
     public static function logout(): void
     {
         self::start();
@@ -35,7 +41,17 @@ class CustomerSession
 
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+            $options = [
+                'expires' => time() - 42000,
+                'path' => ($params['path'] ?? '') !== '' ? $params['path'] : '/',
+                'secure' => (bool) ($params['secure'] ?? false),
+                'httponly' => (bool) ($params['httponly'] ?? true),
+                'samesite' => is_string($params['samesite'] ?? null) && $params['samesite'] !== '' ? $params['samesite'] : 'Lax',
+            ];
+            if (($params['domain'] ?? '') !== '') {
+                $options['domain'] = $params['domain'];
+            }
+            setcookie(session_name(), '', $options);
         }
 
         session_destroy();

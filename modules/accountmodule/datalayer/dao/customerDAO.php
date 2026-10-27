@@ -21,7 +21,7 @@ class CustomerDAO
     {
         $rows = $this->request('GET', '?' . http_build_query([
             'select' => 'id,name,email,phone_number,role,password_hash',
-            'email' => 'ilike.' . $email,
+            'email' => 'ilike.' . $this->escapeLike($email),
             'limit' => 1,
         ]));
 
@@ -72,10 +72,72 @@ class CustomerDAO
                 throw $exception;
             }
 
+            if ($this->findById($authId) === null) {
+                $this->authRequest('DELETE', '/admin/users/' . rawurlencode($authId));
+                throw new InvalidArgumentException('Dit e-mailadres is al in gebruik.');
+            }
+
             unset($profile['id']);
             $rows = $this->request('PATCH', '?' . http_build_query([
                 'id' => 'eq.' . $authId,
             ]), $profile, true);
+        }
+
+        if (!isset($rows[0]['id'])) {
+            throw new RuntimeException('Supabase HTTP 500');
+        }
+
+        return $this->createUserFromRow($rows[0]);
+    }
+
+    public function updateProfile(User $current, User $updated): User
+    {
+        $id = $updated->getId();
+        if (!is_string($id) || preg_match('/^[0-9a-fA-F-]{36}$/', $id) !== 1 || $id !== $current->getId()) {
+            throw new InvalidArgumentException('Je account is niet gevonden.');
+        }
+
+        $name = trim($updated->getFirstName() . ' ' . $updated->getLastName());
+        $emailChanged = $updated->getEmail() !== $current->getEmail();
+        $authPayload = [
+            'user_metadata' => ['name' => $name],
+        ];
+        if ($emailChanged) {
+            $authPayload['email'] = $updated->getEmail();
+            $authPayload['email_confirm'] = true;
+        }
+
+        try {
+            $this->authRequest('PUT', '/admin/users/' . rawurlencode($id), $authPayload);
+        } catch (RuntimeException $exception) {
+            if (!str_contains($exception->getMessage(), 'HTTP 404')) {
+                throw $exception;
+            }
+        }
+
+        try {
+            $rows = $this->request('PATCH', '?' . http_build_query([
+                'id' => 'eq.' . $id,
+            ]), [
+                'name' => $name,
+                'email' => $updated->getEmail(),
+                'phone_number' => $updated->getPhone(),
+            ], true);
+        } catch (RuntimeException $exception) {
+            if ($emailChanged) {
+                try {
+                    $this->authRequest('PUT', '/admin/users/' . rawurlencode($id), [
+                        'email' => $current->getEmail(),
+                        'email_confirm' => true,
+                        'user_metadata' => [
+                            'name' => trim($current->getFirstName() . ' ' . $current->getLastName()),
+                        ],
+                    ]);
+                } catch (RuntimeException) {
+                }
+            }
+
+            throw $exception;
         }
 
         if (!isset($rows[0]['id'])) {
@@ -118,6 +180,11 @@ class CustomerDAO
             is_string($passwordHash) ? $passwordHash : '',
             is_string($role) && $role !== '' ? $role : 'customer'
         );
+    }
+
+    private function escapeLike(string $value): string
+    {
+        return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $value);
     }
 
     private function splitName(string $name): array

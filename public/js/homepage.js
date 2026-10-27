@@ -33,6 +33,14 @@ document.querySelectorAll('.filter').forEach(function (filter) {
 
 var search = document.querySelector('.search input');
 if (search) {
+    var zoek = new URLSearchParams(window.location.search).get('zoek');
+    if (zoek) {
+        search.value = zoek;
+        searchQuery = zoek.toLowerCase().trim();
+        updateVisibleCards();
+        updateClearFiltersVisibility();
+    }
+
     search.addEventListener('input', function () {
         searchQuery = search.value.toLowerCase().trim();
         updateVisibleCards();

@@ -18,16 +18,16 @@ $pageTitle ??= 'JanExpress';
     <link rel="stylesheet" href="<?= e($publicPath) ?>/css/auth.css">
 </head>
 
-<body>
+<body class="page-auth">
     <header class="header">
         <a class="brand" href="<?= e($homeUrl) ?>"><img class="brand-logo" src="<?= e($publicPath) ?>/logo/janexpresslogo.png" alt=""><span class="brand-name">JanExpress</span></a>
-        <label class="search">
+        <form class="search" action="<?= e($homeUrl) ?>#producten" method="get">
             <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="11" cy="11" r="6.5"></circle>
                 <path d="m16 16 4 4"></path>
             </svg>
-            <input type="search" placeholder="Waar ben je naar op zoek?">
-        </label>
+            <input type="search" name="zoek" placeholder="Waar ben je naar op zoek?" aria-label="Zoeken">
+        </form>
         <a class="nav-link" href="<?= e($homeUrl) ?>#producten">Producten</a>
         <?php require __DIR__ . '/accountLink.php'; ?>
         <a class="cart header-cart" href="<?= e($ordersUrl) ?>" aria-label="Winkelmand">
