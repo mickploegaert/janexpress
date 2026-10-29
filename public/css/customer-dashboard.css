@@ -1,5 +1,7 @@
-.auth-page {
+/* Dashboard is breder dan login/register; page-auth zet anders max-width 520px. */
+body.page-auth main.auth-page {
     max-width: 1120px;
+    justify-content: flex-start;
     padding-top: 54px;
 }
 
@@ -84,7 +86,6 @@
 
 .order-card {
     margin-bottom: 12px;
-    overflow: hidden;
 }
 
 .order-card summary {
@@ -117,6 +118,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    min-width: 0;
 }
 
 .order-card summary strong {
@@ -173,8 +175,14 @@
     font-size: 16px;
 }
 
+@media (max-width: 900px) {
+    .dashboard-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 650px) {
-    .auth-page {
+    body.page-auth main.auth-page {
         padding-top: 30px;
     }
 
@@ -186,11 +194,16 @@
         font-size: 42px;
     }
 
-    .dashboard-layout {
-        grid-template-columns: 1fr;
-    }
-
     .profile-card {
         width: 100%;
+    }
+
+    .order-card summary {
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .order-summary-right {
+        align-items: flex-start;
     }
 }
